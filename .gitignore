@@ -1,0 +1,7 @@
+*.sqlite3
+.DS_Store
+/node_modules
+/assets/components
+/public/*
+/.grunt
+/spec/spec_runner.html

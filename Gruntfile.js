@@ -4,6 +4,16 @@ module.exports = function(grunt) {
   // Initialize the configuration block.
   config.init(grunt);
 
+  // Configure JSHint.
+  config.set("jshint.dist", {
+      options: {
+        jshintrc: true
+      }
+    , src: [
+        "Gruntfile.js", "assets/javascripts/todo/**/*.js", "spec/**/*.js"
+      ]
+  });
+
   // Compress the CSS.
   config.set("cssmin.dist", {
       src: "assets/stylesheets/todo.css"
@@ -20,20 +30,44 @@ module.exports = function(grunt) {
     }]
   });
 
+  var jsFiles = [
+      "assets/components/jquery/dist/jquery.js"
+    , "assets/javascripts/boot.js"
+    , "assets/javascripts/todo/**/*.js"
+  ];
+
+  //Concatenate JavaScript files
+  config.set("concat.dist", {
+      src: jsFiles
+    , dest: "public/javascripts/todo.js"
+  });
+
   // Compress JavaScript
   config.set("uglify.dist", {
       options: {
           sourceMap: true
         , sourceMapIncludeSources: true
       }
-    , src: ["assets/javascripts/**/*.js"]
+    , src: jsFiles
+    , dest: "public/javascripts/todo.js"
+  });
+
+  // Compress JavaScript
+  config.set("uglify.dev", {
+      options: {
+          sourceMap: true
+        , sourceMapIncludeSources: true
+        , beautify: true
+        , mangle: false
+      }
+    , src: jsFiles
     , dest: "public/javascripts/todo.js"
   });
 
   // Watch for updates.
   config.set("watch.js", {
       files: ["assets/javascripts/**/*.js", "assets/components/**/*"]
-    , tasks: ["uglify"]
+    , tasks: ["jshint", "uglify:dev"]
   });
 
   config.set("watch.css", {
@@ -66,6 +100,8 @@ module.exports = function(grunt) {
       }
   });
 
+  // Register the dev task, which skips minification.
+  config.registerTask("dev", ["jshint", "cssmin", "imagemin", "uglify:dev"]);
   // Register the default task.
-  config.registerTask("default", ["cssmin", "imagemin", "uglify"]);
+  config.registerTask("default", ["jshint", "cssmin", "imagemin", "uglify:dist"]);
 };

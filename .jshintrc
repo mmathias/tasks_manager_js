@@ -1,0 +1,8 @@
+{
+  "curly"     : true,
+  "browser"   : true,
+  "laxcomma"  : true,
+  "plusplus"  : true,
+  "quotmark"  : "double",
+  "unused"    : true
+}

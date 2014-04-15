@@ -8,4 +8,20 @@ describe("Todo.task", function() {
     });
 
   });
+  describe(".setDone()", function() {
+    it("sets task as done", function() {
+      var task = new Todo.Task();
+      task.setDone(true);
+
+      expect(task.isDone()).toBeTruthy();
+    });
+
+    it("sets task as pending", function() {
+      var task = new Todo.Task();
+      task.setDone(true);
+      task.setDone(false);
+
+      expect(task.isDone()).toBeFalsy();
+    });
+  });
 });

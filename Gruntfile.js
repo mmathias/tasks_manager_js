@@ -4,13 +4,28 @@ module.exports = function(grunt) {
   // Initialize the configuration block.
   config.init(grunt);
 
+  // Configure the Handlebars.
+  config.set("handlebars.dist",{
+      options:{
+          namespace: "Todo.templates"
+        , processName: function(path){
+            return path.replace(/^.*?\/([^\/]+).hbs$/, "$1");
+          }
+      }
+    , src: "assets/handlebars/**/*.hbs"
+    , dest: "assets/javascripts/todo/templates.js"
+  });
+
   // Configure JSHint.
   config.set("jshint.dist", {
       options: {
-        jshintrc: true
+          jshintrc: true
+        , ignores: "assets/javascripts/todo/templates.js"
       }
     , src: [
-        "Gruntfile.js", "assets/javascripts/todo/**/*.js", "spec/**/*.js"
+          "Gruntfile.js"
+        , "assets/javascripts/todo/**/*.js"
+        , "spec/**/*.js"
       ]
   });
 
@@ -32,6 +47,7 @@ module.exports = function(grunt) {
 
   var jsFiles = [
       "assets/components/jquery/dist/jquery.js"
+    , "assets/components/handlebars/handlebars.runtime.js"
     , "assets/javascripts/boot.js"
     , "assets/javascripts/todo/**/*.js"
   ];
@@ -45,8 +61,7 @@ module.exports = function(grunt) {
   // Compress JavaScript
   config.set("uglify.dist", {
       options: {
-          sourceMap: true
-        , sourceMapIncludeSources: true
+          report: "gzip"
       }
     , src: jsFiles
     , dest: "public/javascripts/todo.js"
@@ -66,8 +81,8 @@ module.exports = function(grunt) {
 
   // Watch for updates.
   config.set("watch.js", {
-      files: ["assets/javascripts/**/*.js", "assets/components/**/*"]
-    , tasks: ["jshint", "uglify:dev"]
+      files: ["Gruntfile.js", "assets/handlebars/**/*.hbs","spec/todo/**/*.js","assets/javascripts/**/*.js", "assets/components/**/*", "spec/**/*.js"]
+    , tasks: ["jshint", "handlebars", "jasmine", "uglify:dev"]
   });
 
   config.set("watch.css", {
@@ -80,11 +95,6 @@ module.exports = function(grunt) {
     , tasks: ["imagemin"]
   });
 
-  config.set("watch.jasmine", {
-      files: ["assets/javascripts/todo/**/*.js", "spec/**/*.js"]
-    , tasks: ["jasmine"]
-  });
-
   // Jasmine specs.
   config.set("jasmine.specs", {
       src: "assets/javascripts/todo/**/*.js"
@@ -95,13 +105,14 @@ module.exports = function(grunt) {
         , outfile: "spec/spec_runner.html"
         , version: "2.0.0"
         , vendor: [
-            "assets/components/jquery/dist/jquery.js"
+              "assets/components/jquery/dist/jquery.js"
+            , "assets/components/handlebars/handlebars.runtime.js"
           ]
       }
   });
 
   // Register the dev task, which skips minification.
-  config.registerTask("dev", ["jshint", "cssmin", "imagemin", "uglify:dev"]);
+  config.registerTask("dev", ["jshint", "cssmin", "imagemin", "handlebars", "uglify:dev"]);
   // Register the default task.
-  config.registerTask("default", ["jshint", "cssmin", "imagemin", "uglify:dist"]);
+  config.registerTask("default", ["jshint", "cssmin", "imagemin", "handlebars", "uglify:dist"]);
 };

@@ -1,30 +1,27 @@
 Todo.EnterInput = (function(){
-  // The <enter> keycode.
-  var ENTER = 13;
 
   function EnterInput(input){
     this.input = input;
+    this.keyboard = new Todo.KeyboardBinding(this.input);
     Todo.Utils.extendWithEmitter(this);
   }
 
   EnterInput.fn = EnterInput.prototype;
 
   EnterInput.fn.init = function() {
-    this.input.on("keyup", $.proxy(this, "onKeyUp"));
+    // this.input.on("keyup", $.proxy(this, "onKeyUp"));
+    this.keyboard.on("enter", $.proxy(this, "onEnter"));
   };
 
-  EnterInput.fn.onKeyUp = function(event) {
-    var value = event.target.value;
-    if(event.which !== ENTER){
-      return;
-    }
+  EnterInput.fn.onEnter = function(event, input) {
+    var value = input.value;
 
     if(!value){
       return;
     }
 
     // Clears the input value
-    event.target.value = "";
+     input.value = "";
 
     // Emitter our custom event with
     // the typed value
